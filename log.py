@@ -525,12 +525,10 @@ else:
 
                     st.write("X columns before:", X_test.columns.tolist())
 
-                    if hasattr(scaler, 'feature_names_in_'):
-                        X_test = X_test[scaler.feature_names_in_]
+                    
 
                     X_test = X_test.fillna(X_test.mean())
-                    X_scaled = scaler.transform(X_test)
-                    predictions = model.predict(X_scaled)
+                    
 
 # Convert actual labels to match model integer output
                     y_test = y_test.astype(str).str.strip().str.lower()
