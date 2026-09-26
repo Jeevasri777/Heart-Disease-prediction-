@@ -496,7 +496,7 @@ else:
 
             try:
                 model = joblib.load("heart.pkl")
-                scaler = joblib.load("scaler.pkl")
+                
 
                 st.write("CSV Columns:", df.columns.tolist())
 
