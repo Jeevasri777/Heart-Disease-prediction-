@@ -492,111 +492,111 @@ else:
             st.markdown("<br>", unsafe_allow_html=True)
 
             # --- MODEL ACCURACY CALCULATION ENGINE ---
-accuracy_val = "N/A"
+            accuracy_val = "N/A"
 
-try:
-    model = joblib.load("heart.pkl")
+            try:
+                model = joblib.load("heart.pkl")
 
-    possible_targets = [
-        "target",
-        "output",
-        "HeartDisease",
-        "Heart Disease",
-        "condition",
-        "diagnosis"
-    ]
+                possible_targets = [
+                    "target",
+                    "output",
+                    "HeartDisease",
+                    "Heart Disease",
+                    "condition",
+                    "diagnosis"
+                ]
 
-    target_col = next(
-        (
-            col for col in df.columns
-            if col.strip().lower() in [x.lower() for x in possible_targets]
-        ),
-        None
-    )
-
-    if target_col is not None:
-
-        # Separate features and target
-        eval_df = df.dropna(subset=[target_col]).copy()
-
-        X_test = eval_df.drop(columns=[target_col])
-        y_test = eval_df[target_col]
-
-        # Remove target-related unwanted columns if present
-        X_test = X_test.copy()
-
-        # Fill missing numeric values
-        for col in X_test.columns:
-            if X_test[col].isnull().sum() > 0:
-                if X_test[col].dtype == "object":
-                    X_test[col] = X_test[col].fillna(
-                        X_test[col].mode()[0]
-                    )
-                else:
-                    X_test[col] = X_test[col].fillna(
-                        X_test[col].mean()
-                    )
-
-        # Convert categorical columns using numeric encoding
-        for col in X_test.select_dtypes(include="object").columns:
-            from sklearn.preprocessing import LabelEncoder
-
-            le = LabelEncoder()
-            X_test[col] = le.fit_transform(X_test[col].astype(str))
-
-        # Convert target labels
-        y_test = y_test.astype(str).str.strip().str.lower()
-
-        y_test = y_test.replace({
-            "absence": 0,
-            "presence": 1,
-            "no": 0,
-            "yes": 1,
-            "false": 0,
-            "true": 1
-        })
-
-        # Convert target to integer
-        y_test = pd.to_numeric(y_test, errors="coerce")
-
-        # Remove invalid target rows
-        valid_rows = y_test.notna()
-
-        X_test = X_test.loc[valid_rows]
-        y_test = y_test.loc[valid_rows].astype(int)
-
-        # Make sure feature order matches the trained model
-        if hasattr(model, "feature_names_in_"):
-            required_columns = list(model.feature_names_in_)
-
-            # Check missing columns
-            missing_columns = [
-                col for col in required_columns
-                if col not in X_test.columns
-            ]
-
-            if missing_columns:
-                raise ValueError(
-                    f"Missing columns: {missing_columns}"
+                target_col = next(
+                    (
+                        col for col in df.columns
+                        if col.strip().lower() in [x.lower() for x in possible_targets]
+                    ),
+                    None
                 )
 
-            X_test = X_test[required_columns]
+                if target_col is not None:
 
-        # Random Forest prediction
-        predictions = model.predict(X_test)
+                    # Separate features and target
+                    eval_df = df.dropna(subset=[target_col]).copy()
 
-        # Calculate accuracy
-        accuracy = accuracy_score(y_test, predictions)
+                    X_test = eval_df.drop(columns=[target_col])
+                    y_test = eval_df[target_col]
 
-        # Display percentage
-        accuracy_val = f"{accuracy * 100:.2f}%"
+                    # Remove target-related unwanted columns if present
+                    X_test = X_test.copy()
 
-    else:
-        accuracy_val = "Target Missing"
+                    # Fill missing numeric values
+                    for col in X_test.columns:
+                        if X_test[col].isnull().sum() > 0:
+                            if X_test[col].dtype == "object":
+                                X_test[col] = X_test[col].fillna(
+                                    X_test[col].mode()[0]
+                                )
+                            else:
+                                X_test[col] = X_test[col].fillna(
+                                    X_test[col].mean()
+                                )
 
-except Exception as e:
-    st.write("Accuracy Error:", e)
-    accuracy_val = "Error"
+                    # Convert categorical columns using numeric encoding
+                    for col in X_test.select_dtypes(include="object").columns:
+                        from sklearn.preprocessing import LabelEncoder
+
+                        le = LabelEncoder()
+                        X_test[col] = le.fit_transform(X_test[col].astype(str))
+
+                    # Convert target labels
+                    y_test = y_test.astype(str).str.strip().str.lower()
+
+                    y_test = y_test.replace({
+                        "absence": 0,
+                        "presence": 1,
+                        "no": 0,
+                        "yes": 1,
+                        "false": 0,
+                        "true": 1
+                    })
+
+                    # Convert target to integer
+                    y_test = pd.to_numeric(y_test, errors="coerce")
+
+                    # Remove invalid target rows
+                    valid_rows = y_test.notna()
+
+                    X_test = X_test.loc[valid_rows]
+                    y_test = y_test.loc[valid_rows].astype(int)
+
+                    # Make sure feature order matches the trained model
+                    if hasattr(model, "feature_names_in_"):
+                        required_columns = list(model.feature_names_in_)
+
+                        # Check missing columns
+                        missing_columns = [
+                            col for col in required_columns
+                            if col not in X_test.columns
+                        ]
+
+                        if missing_columns:
+                            raise ValueError(
+                                f"Missing columns: {missing_columns}"
+                            )
+
+                        X_test = X_test[required_columns]
+
+                    # Random Forest prediction
+                    predictions = model.predict(X_test)
+
+                    # Calculate accuracy
+                    accuracy = accuracy_score(y_test, predictions)
+
+                    # Display percentage
+                    accuracy_val = f"{accuracy * 100:.2f}%"
+
+                else:
+                    accuracy_val = "Target Missing"
+
+            except Exception as e:
+                st.write("Accuracy Error:", e)
+                accuracy_val = "Error"
 
             # 5-Column Dashboard Statistics Layout
             col1, col2, col3, col4, col5 = st.columns(5)
