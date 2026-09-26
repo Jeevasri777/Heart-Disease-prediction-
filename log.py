@@ -495,7 +495,7 @@ else:
             accuracy_val = "N/A"
 
             try:
-                model = joblib.load("heart_disease.pkl")
+                model = joblib.load("heart.pkl")
                 scaler = joblib.load("scaler.pkl")
 
                 st.write("CSV Columns:", df.columns.tolist())
