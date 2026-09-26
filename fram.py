@@ -12,9 +12,7 @@ import pandas as pd
 # LOAD DUMPED FILES
 # -----------------------------------------
 
-model = joblib.load(
-    r"C:\Users\jeeva\OneDrive\Desktop\mini\heart.pkl"
-)
+model = joblib.load("heart.pkl")
 
 
 
