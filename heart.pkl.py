@@ -1,0 +1,124 @@
+import pandas as pd
+import joblib
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+
+
+# Load dataset
+
+df = pd.read_csv(
+    r"C:/Users/jeeva/OneDrive/Desktop/mini/datasetss.csv"
+)
+
+
+# Handle missing values
+
+for col in df.columns:
+
+    if df[col].isnull().sum() > 0:
+
+        if df[col].dtype == "object":
+
+            df[col] = df[col].fillna(
+                df[col].mode()[0]
+            )
+
+        else:
+
+            df[col] = df[col].fillna(
+                df[col].mean()
+            )
+
+
+# Encoding
+
+encoder = {}
+
+for col in df.select_dtypes(include="object").columns:
+
+    # Don't encode target separately if it is already numeric
+    le = LabelEncoder()
+
+    df[col] = le.fit_transform(df[col])
+
+    encoder[col] = le
+
+
+# Split features and target
+
+X = df.drop(
+    "Heart Disease",
+    axis=1
+)
+
+y = df["Heart Disease"]
+
+
+# Train test split
+
+X_train, X_test, y_train, y_test = train_test_split(
+
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+
+)
+
+
+# Random Forest Model
+
+model = RandomForestClassifier(
+
+    n_estimators=100,
+    criterion="gini",
+    max_depth=None,
+    random_state=42,
+    n_jobs=-1
+
+)
+
+
+# Training
+
+model.fit(
+    X_train,
+    y_train
+)
+
+
+# Model accuracy
+
+accuracy = model.score(
+    X_test,
+    y_test
+)
+
+print("Random Forest Accuracy:",
+      accuracy * 100)
+
+
+# SAVE MODEL
+
+joblib.dump(
+    model,
+    "heart_diseases.pkl"
+)
+
+joblib.dump(
+    encoder,
+    "encoder.pkl"
+)
+joblib.dump(
+    model,
+    r"C:\Users\jeeva\OneDrive\Desktop\mini\heart.pkl"
+)
+
+print("heart.pkl created successfully")
+
+
+
+print("encoder.pkl created successfully")
