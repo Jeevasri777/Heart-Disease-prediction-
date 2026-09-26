@@ -612,8 +612,7 @@ else:
         )
 
         model = joblib.load("heart.pkl")
-        scaler = joblib.load("scaler.pkl")
-
+        
         st.markdown('<div class="dashboard-card">', unsafe_allow_html=True)
         st.markdown("### 📋 Patient Information")
         st.markdown("<br>", unsafe_allow_html=True)
@@ -664,7 +663,7 @@ else:
                 ]
             )
 
-            result = model.predict(scaler.transform(data))
+            result = model.predict(data)
             st.markdown("<br>", unsafe_allow_html=True)
 
             col1, col2, col3 = st.columns([1, 2, 1])
