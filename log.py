@@ -613,7 +613,7 @@ else:
             unsafe_allow_html=True
         )
 
-        model = joblib.load("heart_disease.pkl")
+        model = joblib.load("heart.pkl")
         scaler = joblib.load("scaler.pkl")
 
         st.markdown('<div class="dashboard-card">', unsafe_allow_html=True)
